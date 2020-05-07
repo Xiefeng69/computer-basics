@@ -1,0 +1,184 @@
+数据结构与算法
+
+1.排序
+    1）冒泡排序
+        对每一对相邻元素，从开始第一对到结尾的最后一对，进行比较，若第一个比第二个大，则交换
+        针对数组中的所有元素重复以上的步骤
+        function bubbleSort(arr) {
+            let len = arr.length;
+            for(let i = 0; i < len; i++){
+                for (let j = 0; j < len - 1 - i; j++){
+                    if (arr[j] > arr[j + 1]){
+                        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                    }
+                }
+            }
+            console.log(arr);
+        }
+        时间复杂度：
+            最好情况下，即数组已排序，为O(N)
+            最坏情况，O(N^2)
+            平均时间复杂度：O(N^2)
+
+        最好情况下时间复杂度的计算：通过设置一个布尔值来判断是否已排序
+        function bubbleSort(arr) {
+            let didSwap = false;
+            let len = arr.length;
+            for(let i = 0; i < len; i++){
+                for (let j = 0; j < len - 1 - i; j++){
+                    if (arr[j] > arr[j + 1]){
+                        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+                        didSwap = true;
+                    }
+                }
+                if(didSwap === false){  //即后续不再需要进行交换了
+                    return arr;
+                }
+            }
+            return arr;
+        }
+
+        优化方案：传统冒泡排序中每一趟排序操作只能找到一个最大值或最小值
+                 考虑利用在每趟排序中进行正向和反向两遍冒泡的方法一次可以得到两个最终值(最大者和最小者) , 从而使排序趟数几乎减少了一半
+                 function bubbleSort3(arr3) {
+                     var low = 0;
+                     var high= arr.length-1; //设置变量的初始值
+                     var tmp,j;
+                     while (low < high) {
+                         for (j= low; j< high; ++j) //正向冒泡,找到最大者
+                             if (arr[j]> arr[j+1]) {
+                                tmp = arr[j]; arr[j]=arr[j+1];arr[j+1]=tmp;
+                             }
+                         --high;                 //修改high值, 前移一位
+                         for (j=high; j>low; --j) //反向冒泡,找到最小者
+                             if (arr[j]<arr[j-1]) {
+                                 tmp = arr[j]; arr[j]=arr[j-1];arr[j-1]=tmp;
+                             }
+                         ++low;                  //修改low值,后移一位
+                     }
+                 }
+
+    2）选择排序
+        每次从未排序序列中找到最大/最小值，放在已排序序列的末尾，直到所有元素均排序完毕
+        function selectSort(arr){
+            let len = arr.length;
+            for (let i = 0; i < len - 1; i++){
+                let minIndex = i;
+                for (let j = i+1; j < len; j++){
+                    if (arr[minIndex] > arr[j]){
+                        minIndex = j;
+                    }
+                }
+                [arr[minIndex], arr[i]] = [arr[i], arr[minIndex]];
+            }
+            console.log(arr)
+        }
+        最好/最坏/平均 时间复杂度：O(N^2)
+
+    3) 快速排序
+        通过一趟排序将待排记录分隔成独立的两部分，其中一部分记录的关键字均比另一部分的关键字小，则可分别对这两部分记录继续进行排序，以达到整个序列有序
+        a. 从数列中挑出一个元素，称为 “基准”（pivot）
+        b. 所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面，也称分区（partition）操作
+        c. 递归地（recursive）把 小于基准值元素的子数列 和 大于基准值元素的子数列 排序
+
+        function partition(arr, left, right) {
+            let pivot = arr[left];
+            while(left < right){
+                while(left < right && arr[right] > pivot){
+                    right --;
+                }
+                arr[left] = arr[right];
+                while(left < right && arr[left] <= pivot){
+                    left ++;
+                }
+                arr[right] = arr[left];
+            }
+            arr[left] = pivot;
+            return left;
+        }
+        function quickSort(arr, left, right){
+            if (left < right){
+                let pos = partition(arr, left, right);
+                quickSort(arr, left, pos-1);
+                quickSort(arr, pos+1, right);
+            }
+            return arr;
+        }
+        最佳情况：T(n) = O(nlogn)
+        最差情况：T(n) = O(n2)
+        平均情况：T(n) = O(nlogn)
+
+    4.归并排序
+        算法是采用分治法（Divide and Conquer）
+        即 分解成子问题 => 求解子问题 => 合并子问题
+        1）把长度为n的输入序列分成两个长度为n/2的子序列
+        2）对这两个子序列分别采用归并排序
+        3）将两个排序好的子序列合并成一个最终的排序序列
+
+        function mergeSort(arr){
+            if (arr.length < 2){
+                return arr;
+            }
+            let middle = Math.floor(arr.length / 2);
+            let left = arr.slice(0, middle);
+            let right = arr.slice(middle);
+            return merge(mergeSort(left), mergeSort(right));
+        }
+        function merge(left, right){
+            let res = [];
+            while(left.length && right.length){
+                if (left[0] > right[0]){
+                    res.push(right.shift());
+                }else{
+                    res.push(left.shift());
+                }
+            }
+            if (left.length){
+                res = res.concat(left);
+            }
+            if (right.length){
+                res = res.concat(right);
+            }
+            return res;
+        }
+
+    5）插入排序
+        function insertSelect(arr){
+            let len = arr.length;
+            for (let i = 1; i < len; i++){
+                let tmp = arr[i];
+                j = i - 1;
+                while(j >= 0 && arr[j] > tmp){
+                    arr[j + 1] = arr[j];
+                    j--;
+                }
+                arr[j + 1] = tmp;
+            }
+            console.log(arr);
+        }
+        时间复杂度： O(N^2)
+        插入排序对于 小规模数据 或者 数据基本有序 时十分高效
+
+    6) 希尔排序（缩小增量排序）
+        function shellSort(arr){
+            let len = arr.length;
+            let d = Math.floor(len / 2);  //增量为 增量/2
+            while(d >= 1){
+                for (let i = 0; i < d; i++){
+                    // 内部为插入排序
+                    for (let j = i + d; j < len; j += d){
+                        let tmp = arr[j];  // 赋值待进行插入排序的元素
+                        let z = j - d;  //往前比较
+                        while(z >= i && arr[z] > tmp){
+                            arr[z + d] = arr[z];
+                            z -= d;
+                        }
+                        arr[z + d] = tmp;
+                    }
+                }
+                d = Math.floor(d / 2);
+            }
+            console.log(arr);
+        }
+
+        时间复杂度：O(N^(3/2)) ~ O(N^2)

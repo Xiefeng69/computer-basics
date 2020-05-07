@@ -1,0 +1,9 @@
+cd [target_dir]      进入目标目录
+cd ..                返回上一级目录
+cd \                 返回根目录
+d:                   进入磁盘D
+dir                  详细显示当前目录下的目录结构
+dir /b               只显示当前目录中的子文件夹与文件的文件名
+mkdir [dirname]      在该目录下创建新目录
+rd [dirname]         删除该目录下的空目录
+ipconfig             查看ip配置
